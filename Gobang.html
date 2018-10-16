@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>五子棋</title>
+		<style>
+			.replay {
+				width: 150px;
+				height: 60px;
+				margin: 0 auto;
+				text-align: center;
+				line-height: 60px;
+				background-color: #00BFFF;
+				border: none;
+				border-radius: 10px;
+				display: block;
+				color: #FFFFFF;
+				font-size: 18px;
+				outline: none;
+			}
+			.replay:hover {
+				background-color: #00FFFF;
+			}
+		</style>
+	</head>
+	<body onload="init()">
+		<div style="width:600px;height: 600px; margin: 30px auto;">
+			<canvas id="can" width="600" height="600" style="background: url(img/bak.jpg);" onclick="play(event)"></canvas>
+		</div>
+		<input class="replay" type="button" onclick="replay()" value="New Game">
+		
+		
+		<script>
+			var maps = new Array(15);
+			for(var i = 0;i< 15; i++) {
+				maps[i] = new Array(15);
+				for(var j = 0; j < 15; j++) {
+					maps[i][j] = 0;
+				}
+			}
+			
+			//黑白子初始化
+			var black = new Image();
+			var white = new Image();
+			black.src = "img/black.png";
+			white.src = "img/white.png";
+			
+			var can;
+			var ctx
+			
+			var isblack = true;
+			//初始化棋盘
+			function init() {
+				can = document.getElementById('can');
+				ctx = can.getContext("2d");
+				ctx.strokeStyle="#FFFFFF";
+				for(var i = 0 ;i < 15; i++) {
+					for(var j = 0; j < 15; j++) {
+						ctx.strokeRect(j*40,i*40,40,40);
+					}
+				}
+				
+			}
+			
+			function play(e) {
+				//获取棋盘点击位置的坐标，将棋盘左上角设为（0,0）
+				var x = e.clientX - can.getBoundingClientRect().left;
+				var y = e.clientY - can.getBoundingClientRect().top;
+				
+				var col = Math.round(x/40);
+				var row = Math.round(y/40);
+				
+				if(row == 0 || col == 0 || row == 15 || col == 15) {
+					alert('此处无效');
+					return;
+				}
+				else {
+					if(isblack&&maps[row][col] == 0){
+						
+						ctx.drawImage(black,col*40-20,row*40-20);
+						isblack = false;
+						maps[row][col] = 2; //黑子
+						isWin(2,row,col);
+					}
+					else if(maps[row][col] == 0) {
+						ctx.drawImage(white,col*40-20,row*40-20);
+						isblack = true;
+						maps[row][col] = 1; //白子
+						isWin(1,row,col);
+					}
+				}
+				
+				
+				function isWin(t,row,col){
+					var orgrow = row;
+					var orgcol = col;
+					var total = 1;
+					
+					//水平方向判断
+					while(col-1>0&&maps[row][col-1]== t) {
+						total++;
+						col--;
+					}
+					
+					row = orgrow;
+					col = orgcol;
+					while(col+1<15&&maps[row][col+1] == t) {
+						col++;
+						total++;
+						
+					}
+					
+					if(total >=5) {
+						if(t == 1){
+							alert("白子赢");
+						}
+						else{
+							alert("黑子赢");
+						}
+					}
+					
+					//垂直方向
+					orgrow = row;
+					orgcol = col;
+					total = 1;
+					
+					
+					while(row-1>0&&maps[row-1][col]== t) {
+						total++;
+						row--;
+					}
+					
+					row = orgrow;
+					col = orgcol;
+					while(row+1<15&&maps[row+1][col] == t) {
+						row++;
+						total++;
+						
+					}
+					
+					if(total >=5) {
+						if(t == 1){
+							alert("白子赢");
+						}
+						else{
+							alert("黑子赢");
+						}
+					}
+					
+					//左上
+					orgrow = row;
+					orgcol = col;
+					total = 1;
+					
+					
+					while(col-1>0&&row-1>0&&maps[row-1][col-1]== t) {
+						total++;
+						row--;
+						col--;
+					}
+					//右下
+					row = orgrow;
+					col = orgcol;
+					while(row+1<15&&col+1<15&&maps[row+1][col+1] == t) {
+						row++;
+						col++;
+						total++;
+						
+					}
+					
+					if(total >=5) {
+						if(t == 1){
+							alert("白子赢");
+						}
+						else{
+							alert("黑子赢");
+						}
+					}
+					
+					//右上
+					orgrow = row;
+					orgcol = col;
+					total = 1;
+					
+					
+					while(col+1<15&&row-1>0&&maps[row-1][col+1]== t) {
+						total++;
+						row--;
+						col++;
+					}
+					//左下
+					row = orgrow;
+					col = orgcol;
+					while(row+1<15&&col-1>0&&maps[row+1][col-1] == t) {
+						row++;
+						col--;
+						total++;
+						
+					}
+					
+					if(total >=5) {
+						if(t == 1){
+							alert("白子赢");
+						}
+						else{
+							alert("黑子赢");
+						}
+					}
+					
+				}
+			}
+			
+			function replay() {
+				ctx.clearRect(0,0,can.width,can.height);
+				init();
+			}
+			
+		</script>
+	</body>
+</html>
